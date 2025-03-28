@@ -3,28 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Broker Admin Dashboard</title>
+    <title>Dashboard - Broker Admin</title>
     <link rel="stylesheet" href="styles/main.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar Navigation -->
+    <div class="container">
+        <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <h2>Broker Admin</h2>
-                <button id="sidebar-toggle" class="sidebar-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
+                <div class="sidebar-logo">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Broker Admin</span>
+                </div>
             </div>
-            <nav class="sidebar-nav">
+            
+            <div class="sidebar-nav">
+                <div class="sidebar-nav-header">Main</div>
                 <ul>
                     <li class="active">
                         <a href="index.html">
-                            <i class="fas fa-chart-line"></i>
+                            <i class="fas fa-home"></i>
                             <span>Dashboard</span>
                         </a>
                     </li>
@@ -46,6 +46,10 @@
                             <span>Email Notifications</span>
                         </a>
                     </li>
+                </ul>
+                
+                <div class="sidebar-nav-header">Settings</div>
+                <ul>
                     <li>
                         <a href="settings.html">
                             <i class="fas fa-cog"></i>
@@ -53,166 +57,192 @@
                         </a>
                     </li>
                 </ul>
-            </nav>
-            <div class="sidebar-footer">
-                <button id="logout-btn" class="logout-btn">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </button>
             </div>
         </aside>
-
+        
         <!-- Main Content -->
         <main class="main-content">
-            <header class="content-header">
-                <h1>Dashboard</h1>
-                <div class="user-info">
-                    <div class="user-avatar">
-                        <span id="user-initials">JD</span>
+            <header class="header">
+                <button id="sidebar-toggle" class="toggle-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="header-right">
+                    <div class="user-dropdown">
+                        <div class="user-dropdown-toggle">
+                            <div class="user-avatar">AU</div>
+                            <div class="user-info">
+                                <div class="user-name">Admin User</div>
+                                <div class="user-role">Administrator</div>
+                            </div>
+                        </div>
+                        
+                        <div class="user-dropdown-menu">
+                            <a href="settings.html">
+                                <i class="fas fa-user-cog"></i> Profile Settings
+                            </a>
+                            <a href="#" id="logout-btn">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
+                        </div>
                     </div>
-                    <span id="user-name">John Doe</span>
                 </div>
             </header>
-
-            <!-- Dashboard Content -->
-            <div class="dashboard-container">
-                <!-- Stats Cards -->
-                <section class="stats-cards">
-                    <div class="card stats-card">
-                        <div class="stats-card-icon users-icon">
+            
+            <div class="content">
+                <h1>Dashboard</h1>
+                <p>Welcome to the Broker Admin Dashboard. Here's an overview of your system.</p>
+                
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon primary">
                             <i class="fas fa-users"></i>
                         </div>
-                        <div class="stats-card-content">
-                            <h3>Total Users</h3>
-                            <p id="total-users-count">0</p>
+                        <div class="stat-data">
+                            <div class="stat-value" id="total-users-count">0</div>
+                            <div class="stat-label">Total Users</div>
                         </div>
                     </div>
-
-                    <div class="card stats-card">
-                        <div class="stats-card-icon balance-icon">
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon success">
                             <i class="fas fa-wallet"></i>
                         </div>
-                        <div class="stats-card-content">
-                            <h3>Total Balance</h3>
-                            <p id="total-balance">$0.00</p>
+                        <div class="stat-data">
+                            <div class="stat-value" id="total-balance">$0.00</div>
+                            <div class="stat-label">Total Balance</div>
                         </div>
                     </div>
-
-                    <div class="card stats-card">
-                        <div class="stats-card-icon transactions-icon">
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon info">
                             <i class="fas fa-exchange-alt"></i>
                         </div>
-                        <div class="stats-card-content">
-                            <h3>Total Transactions</h3>
-                            <p id="total-transactions">0</p>
+                        <div class="stat-data">
+                            <div class="stat-value" id="total-transactions">0</div>
+                            <div class="stat-label">Total Transactions</div>
                         </div>
                     </div>
-
-                    <div class="card stats-card">
-                        <div class="stats-card-icon emails-icon">
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon warning">
                             <i class="fas fa-envelope"></i>
                         </div>
-                        <div class="stats-card-content">
-                            <h3>Email Campaigns</h3>
-                            <p id="total-emails">0</p>
+                        <div class="stat-data">
+                            <div class="stat-value" id="total-emails">0</div>
+                            <div class="stat-label">Email Notifications</div>
                         </div>
                     </div>
-                </section>
-
-                <!-- Recent Users and Transactions -->
-                <section class="dashboard-tables">
-                    <!-- Recent Users Table -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h2>Recent Users</h2>
-                            <a href="users.html" class="view-all-link">View All</a>
-                        </div>
-                        <div class="card-content">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>User</th>
-                                        <th>Status</th>
-                                        <th>Balance</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="recent-users-table">
-                                    <!-- Table rows will be populated by JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Recent Transactions Table -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h2>Recent Transactions</h2>
-                            <a href="transactions.html" class="view-all-link">View All</a>
-                        </div>
-                        <div class="card-content">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>User</th>
-                                        <th>Type</th>
-                                        <th>Amount</th>
-                                        <th>Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="recent-transactions-table">
-                                    <!-- Table rows will be populated by JavaScript -->
-                                </tbody>
-                            </table>
+                </div>
+                
+                <!-- Recent Users -->
+                <div class="row">
+                    <div class="col-12 col-lg-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Recent Users</h2>
+                                <a href="users.html" class="btn btn-sm btn-outline-primary">View All</a>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>User</th>
+                                                <th>Status</th>
+                                                <th>Balance</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recent-users-table">
+                                            <!-- Users will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </section>
+                    
+                    <!-- Recent Transactions -->
+                    <div class="col-12 col-lg-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Recent Transactions</h2>
+                                <a href="transactions.html" class="btn btn-sm btn-outline-primary">View All</a>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>User</th>
+                                                <th>Type</th>
+                                                <th>Amount</th>
+                                                <th>Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recent-transactions-table">
+                                            <!-- Transactions will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
-
+    
     <!-- Add Funds Modal -->
     <div id="add-funds-modal" class="modal">
-        <div class="modal-content">
+        <div class="modal-dialog">
             <div class="modal-header">
-                <h2>Add Funds</h2>
-                <button class="close-btn">&times;</button>
+                <h3 class="modal-title">Add Funds</h3>
+                <button class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div class="modal-body">
-                <form id="add-funds-form">
+            <form id="add-funds-form">
+                <div class="modal-body">
                     <input type="hidden" id="user-id-input">
+                    
                     <div class="form-group">
-                        <label for="user-name-display">User</label>
-                        <input type="text" id="user-name-display" disabled>
+                        <label class="form-label">User</label>
+                        <input type="text" id="user-name-display" class="form-control" readonly>
                     </div>
+                    
                     <div class="form-group">
-                        <label for="current-balance-display">Current Balance</label>
-                        <input type="text" id="current-balance-display" disabled>
+                        <label class="form-label">Current Balance</label>
+                        <input type="text" id="current-balance-display" class="form-control" readonly>
                     </div>
+                    
                     <div class="form-group">
-                        <label for="amount-input">Amount to Add</label>
-                        <input type="number" id="amount-input" min="0.01" step="0.01" required>
+                        <label class="form-label" for="amount-input">Amount</label>
+                        <input type="number" id="amount-input" class="form-control" step="0.01" min="0.01" required>
+                        <div class="form-text">Enter the amount to add to the user's account.</div>
                     </div>
+                    
                     <div class="form-group">
-                        <label for="notes-input">Notes</label>
-                        <textarea id="notes-input" rows="3"></textarea>
+                        <label class="form-label" for="notes-input">Notes</label>
+                        <input type="text" id="notes-input" class="form-control">
+                        <div class="form-text">Optional notes for this transaction.</div>
                     </div>
-                    <div class="form-group checkbox-group">
-                        <input type="checkbox" id="send-email-checkbox" checked>
-                        <label for="send-email-checkbox">Send email notification to user</label>
+                    
+                    <div class="form-check">
+                        <input type="checkbox" id="send-email-checkbox" class="form-check-input" checked>
+                        <label class="form-label" for="send-email-checkbox">Send email notification to user</label>
                     </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn secondary-btn cancel-btn">Cancel</button>
-                        <button type="submit" class="btn primary-btn">Add Funds</button>
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Funds</button>
+                </div>
+            </form>
         </div>
     </div>
-
-    <!-- Toast Notifications -->
-    <div id="toast-container" class="toast-container"></div>
-
+    
     <!-- Scripts -->
     <script src="scripts/api.js"></script>
     <script src="scripts/auth.js"></script>

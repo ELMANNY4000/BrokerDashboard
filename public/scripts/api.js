@@ -1,47 +1,143 @@
 /**
- * API Utilities for the Broker Admin Dashboard
+ * API functionality for the Broker Admin Dashboard
  * 
- * This file contains functions for interacting with the in-memory data store.
- * In a real application, these would communicate with a backend server.
+ * This file simulates a backend API using in-memory storage.
  */
 
-// Create an in-memory data store for a frontend-only application
-const dataStore = {
-    users: [
-        { id: 1, username: 'john_smith', password: 'password', email: 'john.smith@example.com', fullName: 'John Smith', balance: 12456.00, status: 'active', createdAt: new Date(2023, 5, 15) },
-        { id: 2, username: 'emma_watson', password: 'password', email: 'emma.watson@example.com', fullName: 'Emma Watson', balance: 1850.00, status: 'active', createdAt: new Date(2023, 5, 16) },
-        { id: 3, username: 'robert_johnson', password: 'password', email: 'robert.j@example.com', fullName: 'Robert Johnson', balance: 3720.50, status: 'pending', createdAt: new Date(2023, 5, 17) },
-        { id: 4, username: 'mary_parker', password: 'password', email: 'mary.p@example.com', fullName: 'Mary Parker', balance: 8125.75, status: 'inactive', createdAt: new Date(2023, 5, 19) },
-        { id: 5, username: 'tom_wilson', password: 'password', email: 'tom.wilson@example.com', fullName: 'Tom Wilson', balance: 5750.25, status: 'active', createdAt: new Date(2023, 5, 20) }
-    ],
-    transactions: [
-        { id: 1, userId: 1, amount: 2500.00, type: 'deposit', status: 'completed', notes: 'Initial deposit', createdAt: new Date(2023, 5, 19, 14, 32, 45) },
-        { id: 2, userId: 2, amount: -750.00, type: 'withdrawal', status: 'completed', notes: '', createdAt: new Date(2023, 5, 19, 12, 15, 22) },
-        { id: 3, userId: 3, amount: 1200.00, type: 'deposit', status: 'pending', notes: '', createdAt: new Date(2023, 5, 18, 18, 45, 10) },
-        { id: 4, userId: 4, amount: 3500.00, type: 'deposit', status: 'completed', notes: 'Bonus payment', createdAt: new Date(2023, 5, 18, 10, 12, 33) },
-        { id: 5, userId: 5, amount: -1800.00, type: 'withdrawal', status: 'failed', notes: 'Insufficient funds', createdAt: new Date(2023, 5, 17, 16, 50, 27) }
-    ],
-    emailNotifications: [
-        { id: 1, subject: 'Welcome to our broker platform', content: 'Welcome email content...', recipientType: 'all', recipientIds: null, sentAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), openRate: 87 },
-        { id: 2, subject: 'Important Security Update', content: 'Security update content...', recipientType: 'all', recipientIds: null, sentAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), openRate: 92 },
-        { id: 3, subject: 'Funds Added Notification', content: 'Your funds have been added...', recipientType: 'custom', recipientIds: '4', sentAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), openRate: 100 },
-        { id: 4, subject: 'New Feature Announcement', content: 'We\'ve added new features...', recipientType: 'active', recipientIds: null, sentAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000), openRate: 78 }
-    ]
-};
+// In-memory storage for users, transactions, and email notifications
+const usersStore = new Map();
+const transactionsStore = new Map();
+const emailsStore = new Map();
 
-// Initialize counter for new data entries
-let idCounters = {
-    users: 6,
-    transactions: 6,
-    emailNotifications: 5
-};
+// Counters for generating IDs
+let userIdCounter = 1;
+let transactionIdCounter = 1;
+let emailIdCounter = 1;
+
+// Seed the store with initial data
+(function seedInitialData() {
+    // Create admin user
+    createUser({
+        username: 'admin',
+        password: 'admin123', // In a real app, this would be hashed
+        fullName: 'Admin User',
+        email: 'admin@example.com',
+        role: 'admin',
+        status: 'active',
+        balance: 0,
+    });
+    
+    // Create some demo users
+    createUser({
+        username: 'jsmith',
+        password: 'password123',
+        fullName: 'John Smith',
+        email: 'john.smith@example.com',
+        role: 'client',
+        status: 'active',
+        balance: 25000.75,
+    });
+    
+    createUser({
+        username: 'agarcia',
+        password: 'password123',
+        fullName: 'Ana Garcia',
+        email: 'ana.garcia@example.com',
+        role: 'client',
+        status: 'active',
+        balance: 7520.50,
+    });
+    
+    createUser({
+        username: 'mjohnson',
+        password: 'password123',
+        fullName: 'Michael Johnson',
+        email: 'michael.johnson@example.com',
+        role: 'client',
+        status: 'inactive',
+        balance: 0,
+    });
+    
+    createUser({
+        username: 'lwilliams',
+        password: 'password123',
+        fullName: 'Lisa Williams',
+        email: 'lisa.williams@example.com',
+        role: 'client',
+        status: 'active',
+        balance: 12350.25,
+    });
+    
+    // Create some demo transactions
+    createTransaction({
+        userId: 2, // John Smith
+        amount: 10000,
+        type: 'deposit',
+        status: 'completed',
+        notes: 'Initial deposit',
+    });
+    
+    createTransaction({
+        userId: 2, // John Smith
+        amount: 15000.75,
+        type: 'deposit',
+        status: 'completed',
+        notes: 'Additional investment',
+    });
+    
+    createTransaction({
+        userId: 3, // Ana Garcia
+        amount: 7520.50,
+        type: 'deposit',
+        status: 'completed',
+        notes: 'Initial deposit',
+    });
+    
+    createTransaction({
+        userId: 4, // Lisa Williams
+        amount: 15000,
+        type: 'deposit',
+        status: 'completed',
+        notes: 'Initial deposit',
+    });
+    
+    createTransaction({
+        userId: 4, // Lisa Williams
+        amount: -2649.75,
+        type: 'withdrawal',
+        status: 'completed',
+        notes: 'Partial withdrawal request',
+    });
+    
+    // Create some demo email notifications
+    createEmailNotification({
+        recipientEmails: ['john.smith@example.com'],
+        subject: 'Welcome to our platform!',
+        content: 'Thank you for registering with our brokerage service. We are excited to have you on board.',
+        status: 'sent',
+    });
+    
+    createEmailNotification({
+        recipientEmails: ['ana.garcia@example.com'],
+        subject: 'Your account is now active',
+        content: 'Congratulations! Your brokerage account is now fully activated and ready for trading.',
+        status: 'sent',
+    });
+    
+    createEmailNotification({
+        recipientEmails: ['john.smith@example.com', 'ana.garcia@example.com', 'lisa.williams@example.com'],
+        subject: 'New investment opportunities available',
+        content: 'Check out our newest investment options that have just become available on the platform.',
+        status: 'sent',
+    });
+})();
 
 /**
  * Get all users
  * @returns {Array} Array of user objects
  */
 function getUsers() {
-    return [...dataStore.users];
+    return Array.from(usersStore.values());
 }
 
 /**
@@ -50,7 +146,7 @@ function getUsers() {
  * @returns {Object|null} User object or null if not found
  */
 function getUserById(userId) {
-    return dataStore.users.find(user => user.id === userId) || null;
+    return usersStore.get(userId) || null;
 }
 
 /**
@@ -59,7 +155,12 @@ function getUserById(userId) {
  * @returns {Object|null} User object or null if not found
  */
 function getUserByUsername(username) {
-    return dataStore.users.find(user => user.username.toLowerCase() === username.toLowerCase()) || null;
+    for (const user of usersStore.values()) {
+        if (user.username === username) {
+            return user;
+        }
+    }
+    return null;
 }
 
 /**
@@ -68,18 +169,21 @@ function getUserByUsername(username) {
  * @returns {Object} The created user
  */
 function createUser(userData) {
+    const timestamp = new Date().toISOString();
     const newUser = {
-        id: idCounters.users++,
+        id: userIdCounter++,
         username: userData.username,
         password: userData.password,
-        email: userData.email,
         fullName: userData.fullName,
-        balance: userData.balance || 0,
+        email: userData.email,
+        role: userData.role || 'client',
         status: userData.status || 'active',
-        createdAt: new Date()
+        balance: parseFloat(userData.balance) || 0,
+        createdAt: timestamp,
+        updatedAt: timestamp
     };
     
-    dataStore.users.push(newUser);
+    usersStore.set(newUser.id, newUser);
     return newUser;
 }
 
@@ -90,11 +194,17 @@ function createUser(userData) {
  * @returns {Object|null} Updated user or null if not found
  */
 function updateUser(userId, updatedData) {
-    const userIndex = dataStore.users.findIndex(user => user.id === userId);
-    if (userIndex === -1) return null;
+    const user = usersStore.get(userId);
     
-    const updatedUser = { ...dataStore.users[userIndex], ...updatedData };
-    dataStore.users[userIndex] = updatedUser;
+    if (!user) return null;
+    
+    const updatedUser = {
+        ...user,
+        ...updatedData,
+        updatedAt: new Date().toISOString()
+    };
+    
+    usersStore.set(userId, updatedUser);
     return updatedUser;
 }
 
@@ -105,7 +215,18 @@ function updateUser(userId, updatedData) {
  * @returns {Object|null} Updated user or null if not found
  */
 function updateUserBalance(userId, newBalance) {
-    return updateUser(userId, { balance: newBalance });
+    const user = usersStore.get(userId);
+    
+    if (!user) return null;
+    
+    const updatedUser = {
+        ...user,
+        balance: newBalance,
+        updatedAt: new Date().toISOString()
+    };
+    
+    usersStore.set(userId, updatedUser);
+    return updatedUser;
 }
 
 /**
@@ -113,7 +234,7 @@ function updateUserBalance(userId, newBalance) {
  * @returns {Array} Array of transaction objects
  */
 function getTransactions() {
-    return [...dataStore.transactions];
+    return Array.from(transactionsStore.values());
 }
 
 /**
@@ -122,7 +243,8 @@ function getTransactions() {
  * @returns {Array} Array of transaction objects
  */
 function getUserTransactions(userId) {
-    return dataStore.transactions.filter(transaction => transaction.userId === userId);
+    return Array.from(transactionsStore.values())
+        .filter(transaction => transaction.userId === userId);
 }
 
 /**
@@ -131,25 +253,25 @@ function getUserTransactions(userId) {
  * @returns {Object} The created transaction
  */
 function createTransaction(transactionData) {
+    const timestamp = new Date().toISOString();
     const newTransaction = {
-        id: idCounters.transactions++,
+        id: transactionIdCounter++,
         userId: transactionData.userId,
-        amount: transactionData.amount,
+        amount: parseFloat(transactionData.amount),
         type: transactionData.type,
-        status: transactionData.status || 'completed',
+        status: transactionData.status || 'pending',
         notes: transactionData.notes || '',
-        createdAt: new Date()
+        createdAt: timestamp,
+        updatedAt: timestamp
     };
     
-    dataStore.transactions.push(newTransaction);
+    transactionsStore.set(newTransaction.id, newTransaction);
     
-    // If this is a deposit or withdrawal, update the user's balance
-    if (transactionData.type === 'deposit' || transactionData.type === 'withdrawal') {
-        const user = getUserById(transactionData.userId);
-        if (user) {
-            const newBalance = user.balance + parseFloat(transactionData.amount);
-            updateUserBalance(user.id, newBalance);
-        }
+    // Update user balance
+    const user = usersStore.get(newTransaction.userId);
+    if (user) {
+        const newBalance = user.balance + newTransaction.amount;
+        updateUserBalance(user.id, newBalance);
     }
     
     return newTransaction;
@@ -160,7 +282,7 @@ function createTransaction(transactionData) {
  * @returns {Array} Array of email notification objects
  */
 function getEmailNotifications() {
-    return [...dataStore.emailNotifications];
+    return Array.from(emailsStore.values());
 }
 
 /**
@@ -169,16 +291,17 @@ function getEmailNotifications() {
  * @returns {Object} The created email notification
  */
 function createEmailNotification(emailData) {
-    const newEmail = {
-        id: idCounters.emailNotifications++,
+    const timestamp = new Date().toISOString();
+    const newEmailNotification = {
+        id: emailIdCounter++,
+        recipientEmails: emailData.recipientEmails,
         subject: emailData.subject,
         content: emailData.content,
-        recipientType: emailData.recipientType,
-        recipientIds: emailData.recipientIds || null,
-        sentAt: new Date(),
-        openRate: 0
+        status: emailData.status || 'pending',
+        createdAt: timestamp,
+        updatedAt: timestamp
     };
     
-    dataStore.emailNotifications.push(newEmail);
-    return newEmail;
+    emailsStore.set(newEmailNotification.id, newEmailNotification);
+    return newEmailNotification;
 }
