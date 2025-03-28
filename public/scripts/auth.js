@@ -1,99 +1,128 @@
-// Authentication handling
-
 /**
- * Current authenticated user
- * @type {Object|null}
+ * Authentication Utilities for the Broker Admin Dashboard
+ * 
+ * This file contains functions for user authentication.
+ * In a frontend-only app, we're using localStorage for persistence.
  */
-let currentUser = null;
+
+// Constants
+const AUTH_TOKEN_KEY = 'broker_admin_auth_token';
+const AUTH_USER_KEY = 'broker_admin_auth_user';
 
 /**
  * Check if user is authenticated, redirect to login if not
- * @returns {Promise<boolean>} - Promise resolving to authenticated status
+ * @returns {boolean} Authentication status
  */
-async function checkAuth() {
-  try {
-    // For demo purposes, we'll use a hardcoded admin user
-    // In a real app, this would be an API call to verify session
-    if (!currentUser) {
-      currentUser = {
-        id: 0,
-        username: 'admin',
-        name: 'Admin User',
-        role: 'admin'
-      };
-      
-      // If on login page and already authenticated, redirect to dashboard
-      if (window.location.pathname === '/login.html') {
-        window.location.href = '/';
+function checkAuth() {
+    const isAuthenticated = !!localStorage.getItem(AUTH_TOKEN_KEY);
+    
+    // If not authenticated and not already on the login page, redirect to login
+    if (!isAuthenticated && !window.location.pathname.includes('login.html')) {
+        window.location.href = 'login.html';
+        return false;
+    }
+    
+    // If authenticated and on login page, redirect to dashboard
+    if (isAuthenticated && window.location.pathname.includes('login.html')) {
+        window.location.href = 'index.html';
         return true;
-      }
     }
     
-    return true;
-  } catch (error) {
-    console.error('Authentication check failed:', error);
-    
-    // If not on login page and not authenticated, redirect to login
-    if (window.location.pathname !== '/login.html') {
-      window.location.href = '/login.html';
-    }
-    
-    return false;
-  }
+    return isAuthenticated;
 }
 
 /**
  * Attempt to login a user
  * @param {string} username - Username to login with
  * @param {string} password - Password to login with
- * @returns {Promise<Object>} - Promise resolving to the authenticated user
+ * @returns {Object|null} Authenticated user or null if login failed
  */
-async function login(username, password) {
-  try {
-    // In a real app, this would be a POST request to /api/auth/login
-    // For demo purposes, we'll just check hardcoded credentials
-    if (username === 'admin' && password === 'password') {
-      currentUser = {
-        id: 0,
-        username: 'admin',
-        name: 'Admin User',
-        role: 'admin'
-      };
-      
-      return currentUser;
-    } else {
-      throw new Error('Invalid username or password');
+function login(username, password) {
+    // For admin login
+    if (username === 'admin' && password === 'admin123') {
+        const adminUser = {
+            id: 0,
+            username: 'admin',
+            fullName: 'John Doe',
+            role: 'admin'
+        };
+        
+        // Save auth token and user info in local storage
+        localStorage.setItem(AUTH_TOKEN_KEY, 'admin_token_' + Date.now());
+        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(adminUser));
+        
+        return adminUser;
     }
-  } catch (error) {
-    console.error('Login failed:', error);
-    throw error;
-  }
+    
+    // For regular user login
+    const user = getUserByUsername(username);
+    
+    if (user && user.password === password) {
+        const authUser = {
+            id: user.id,
+            username: user.username,
+            fullName: user.fullName,
+            role: 'user'
+        };
+        
+        // Save auth token and user info in local storage
+        localStorage.setItem(AUTH_TOKEN_KEY, 'user_token_' + Date.now());
+        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(authUser));
+        
+        return authUser;
+    }
+    
+    return null;
 }
 
 /**
- * Logout the current user
+ * Log out the current user
  */
 function logout() {
-  // In a real app, this would be a POST request to /api/auth/logout
-  currentUser = null;
-  window.location.href = '/login.html';
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+    localStorage.removeItem(AUTH_USER_KEY);
+    window.location.href = 'login.html';
 }
 
 /**
  * Get the current authenticated user
- * @returns {Object|null} - The current user or null if not authenticated
+ * @returns {Object|null} Current user or null if not authenticated
  */
 function getCurrentUser() {
-  return currentUser;
+    const userJson = localStorage.getItem(AUTH_USER_KEY);
+    return userJson ? JSON.parse(userJson) : null;
 }
 
-// Setup logout button click handler
-document.addEventListener('DOMContentLoaded', function() {
-  const logoutBtn = document.getElementById('logout-btn');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', logout);
-  }
-  
-  // Check authentication on page load
-  checkAuth();
-});
+/**
+ * Initialize authentication on page load
+ */
+function initAuth() {
+    // Check authentication status
+    checkAuth();
+    
+    // Update user display if authenticated
+    if (checkAuth()) {
+        const currentUser = getCurrentUser();
+        
+        // Update user display in the header if elements exist
+        const userInitialsElement = document.getElementById('user-initials');
+        const userNameElement = document.getElementById('user-name');
+        
+        if (userInitialsElement && currentUser) {
+            userInitialsElement.textContent = getInitials(currentUser.fullName);
+        }
+        
+        if (userNameElement && currentUser) {
+            userNameElement.textContent = currentUser.fullName;
+        }
+        
+        // Set up logout button event listener
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', logout);
+        }
+    }
+}
+
+// Initialize auth when DOM is loaded
+document.addEventListener('DOMContentLoaded', initAuth);

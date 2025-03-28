@@ -1,7 +1,9 @@
 import { pgTable, text, serial, integer, boolean, timestamp, varchar, decimal } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { relations } from "drizzle-orm";
 
+// Define all tables first
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
@@ -32,6 +34,23 @@ export const emailNotifications = pgTable("email_notifications", {
   sentAt: timestamp("sent_at").notNull().defaultNow(),
   openRate: integer("open_rate"),
 });
+
+// Then define relations
+export const usersRelations = relations(users, ({ many }) => ({
+  transactions: many(transactions),
+  emailNotifications: many(emailNotifications)
+}));
+
+export const transactionsRelations = relations(transactions, ({ one }) => ({
+  user: one(users, {
+    fields: [transactions.userId],
+    references: [users.id]
+  })
+}));
+
+export const emailNotificationsRelations = relations(emailNotifications, ({ many }) => ({
+  users: many(users)
+}));
 
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
