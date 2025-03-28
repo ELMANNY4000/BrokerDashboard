@@ -1,115 +1,239 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Users - Brokerage Admin Panel</title>
-  <link rel="stylesheet" href="/styles/main.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users - Broker Admin</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div class="container">
-    <div class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <h2>Brokerage Admin</h2>
-      </div>
-      <nav class="sidebar-menu">
-        <ul>
-          <li><a href="/" class="nav-link" data-route="/"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-          <li><a href="/users.html" class="nav-link active" data-route="/users"><i class="fas fa-users"></i> Users</a></li>
-          <li><a href="/transactions.html" class="nav-link" data-route="/transactions"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
-          <li><a href="/email-notifications.html" class="nav-link" data-route="/email-notifications"><i class="fas fa-envelope"></i> Email Notifications</a></li>
-          <li><a href="/settings.html" class="nav-link" data-route="/settings"><i class="fas fa-cog"></i> Settings</a></li>
-        </ul>
-      </nav>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Broker Admin</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-nav">
+                <div class="sidebar-nav-header">Main</div>
+                <ul>
+                    <li>
+                        <a href="index.html">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="users.html">
+                            <i class="fas fa-users"></i>
+                            <span>Users</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="transactions.html">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span>Transactions</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="email-notifications.html">
+                            <i class="fas fa-envelope"></i>
+                            <span>Email Notifications</span>
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="sidebar-nav-header">Settings</div>
+                <ul>
+                    <li>
+                        <a href="settings.html">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <button id="sidebar-toggle" class="toggle-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="header-right">
+                    <div class="user-dropdown">
+                        <div class="user-dropdown-toggle">
+                            <div class="user-avatar">AU</div>
+                            <div class="user-info">
+                                <div class="user-name">Admin User</div>
+                                <div class="user-role">Administrator</div>
+                            </div>
+                        </div>
+                        
+                        <div class="user-dropdown-menu">
+                            <a href="settings.html">
+                                <i class="fas fa-user-cog"></i> Profile Settings
+                            </a>
+                            <a href="#" id="logout-btn">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="content">
+                <div class="content-header">
+                    <h1>Users</h1>
+                    <button class="btn btn-primary" id="new-user-btn">
+                        <i class="fas fa-plus"></i> Add New User
+                    </button>
+                </div>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Status</th>
+                                        <th>Balance</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-table">
+                                    <!-- Users will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
     
-    <div class="main-content">
-      <header class="top-header">
-        <div class="header-left">
-          <button id="toggle-sidebar" class="menu-toggle">
-            <i class="fas fa-bars"></i>
-          </button>
-          <h1 id="page-title">Users</h1>
+    <!-- Add Funds Modal -->
+    <div id="add-funds-modal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Funds</h3>
+                <button class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="add-funds-form">
+                <div class="modal-body">
+                    <input type="hidden" id="user-id-input">
+                    
+                    <div class="form-group">
+                        <label class="form-label">User</label>
+                        <input type="text" id="user-name-display" class="form-control" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Current Balance</label>
+                        <input type="text" id="current-balance-display" class="form-control" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="amount-input">Amount</label>
+                        <input type="number" id="amount-input" class="form-control" step="0.01" min="0.01" required>
+                        <div class="form-text">Enter the amount to add to the user's account.</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="notes-input">Notes</label>
+                        <input type="text" id="notes-input" class="form-control">
+                        <div class="form-text">Optional notes for this transaction.</div>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input type="checkbox" id="send-email-checkbox" class="form-check-input" checked>
+                        <label class="form-label" for="send-email-checkbox">Send email notification to user</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Funds</button>
+                </div>
+            </form>
         </div>
-        <div class="header-right">
-          <div class="user-profile">
-            <span class="username">Admin User</span>
-            <button id="logout-btn" class="btn btn-outline"><i class="fas fa-sign-out-alt"></i> Logout</button>
-          </div>
-        </div>
-      </header>
-      
-      <main id="main-content">
-        <div class="dashboard-section">
-          <div class="section-header">
-            <h2>All Users</h2>
-          </div>
-          
-          <div class="table-container">
-            <table class="data-table" id="users-table">
-              <thead>
-                <tr>
-                  <th>User</th>
-                  <th>Email</th>
-                  <th>Status</th>
-                  <th>Balance</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="users-table-body">
-                <!-- User data will be loaded here -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </main>
     </div>
-  </div>
-  
-  <!-- Add Funds Modal -->
-  <div id="add-funds-modal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Add Funds</h2>
-        <button class="modal-close">&times;</button>
-      </div>
-      <div class="modal-body">
-        <form id="add-funds-form">
-          <input type="hidden" id="user-id" name="userId">
-          <div class="form-group">
-            <label for="user-name">User:</label>
-            <input type="text" id="user-name" readonly>
-          </div>
-          <div class="form-group">
-            <label for="amount">Amount:</label>
-            <input type="number" id="amount" name="amount" step="0.01" required>
-          </div>
-          <div class="form-group">
-            <label for="type">Type:</label>
-            <select id="type" name="type">
-              <option value="deposit">Deposit</option>
-              <option value="withdrawal">Withdrawal</option>
-              <option value="bonus">Bonus</option>
-              <option value="adjustment">Adjustment</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="notes">Notes:</label>
-            <textarea id="notes" name="notes"></textarea>
-          </div>
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Submit</button>
-            <button type="button" class="btn btn-outline modal-cancel">Cancel</button>
-          </div>
-        </form>
-      </div>
+    
+    <!-- New User Modal -->
+    <div id="new-user-modal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New User</h3>
+                <button class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="new-user-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="new-username">Username</label>
+                        <input type="text" id="new-username" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="new-password">Password</label>
+                        <input type="password" id="new-password" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="new-fullname">Full Name</label>
+                        <input type="text" id="new-fullname" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="new-email">Email</label>
+                        <input type="email" id="new-email" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="new-role">Role</label>
+                        <select id="new-role" class="form-control">
+                            <option value="client">Client</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="new-status">Status</label>
+                        <select id="new-status" class="form-control">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="new-balance">Initial Balance</label>
+                        <input type="number" id="new-balance" class="form-control" step="0.01" min="0" value="0">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create User</button>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
-  
-  <script src="/scripts/auth.js"></script>
-  <script src="/scripts/api.js"></script>
-  <script src="/scripts/main.js"></script>
-  <script src="/scripts/users.js"></script>
+    
+    <!-- Scripts -->
+    <script src="scripts/api.js"></script>
+    <script src="scripts/auth.js"></script>
+    <script src="scripts/main.js"></script>
+    <script src="scripts/users.js"></script>
 </body>
 </html>
