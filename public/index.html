@@ -90,103 +90,99 @@
             </header>
             
             <div class="content">
-                <h1>Dashboard</h1>
-                <p>Welcome to the Broker Admin Dashboard. Here's an overview of your system.</p>
+                <div class="content-header">
+                    <h1>Dashboard</h1>
+                </div>
                 
-                <!-- Stats Grid -->
+                <!-- Stats Cards -->
                 <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon primary">
+                    <div class="stats-card">
+                        <div class="stats-card-content">
+                            <h2 id="total-users">0</h2>
+                            <p>Total Users</p>
+                        </div>
+                        <div class="stats-card-icon">
                             <i class="fas fa-users"></i>
                         </div>
-                        <div class="stat-data">
-                            <div class="stat-value" id="total-users-count">0</div>
-                            <div class="stat-label">Total Users</div>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="stats-card-content">
+                            <h2 id="total-balance">$0.00</h2>
+                            <p>Total Balance</p>
+                        </div>
+                        <div class="stats-card-icon">
+                            <i class="fas fa-dollar-sign"></i>
                         </div>
                     </div>
                     
-                    <div class="stat-card">
-                        <div class="stat-icon success">
-                            <i class="fas fa-wallet"></i>
+                    <div class="stats-card">
+                        <div class="stats-card-content">
+                            <h2 id="total-transactions">0</h2>
+                            <p>Transactions</p>
                         </div>
-                        <div class="stat-data">
-                            <div class="stat-value" id="total-balance">$0.00</div>
-                            <div class="stat-label">Total Balance</div>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon info">
+                        <div class="stats-card-icon">
                             <i class="fas fa-exchange-alt"></i>
                         </div>
-                        <div class="stat-data">
-                            <div class="stat-value" id="total-transactions">0</div>
-                            <div class="stat-label">Total Transactions</div>
-                        </div>
                     </div>
                     
-                    <div class="stat-card">
-                        <div class="stat-icon warning">
-                            <i class="fas fa-envelope"></i>
+                    <div class="stats-card">
+                        <div class="stats-card-content">
+                            <h2 id="total-emails">0</h2>
+                            <p>Emails Sent</p>
                         </div>
-                        <div class="stat-data">
-                            <div class="stat-value" id="total-emails">0</div>
-                            <div class="stat-label">Email Notifications</div>
+                        <div class="stats-card-icon">
+                            <i class="fas fa-envelope"></i>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Recent Users -->
-                <div class="row">
-                    <div class="col-12 col-lg-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h2 class="card-title">Recent Users</h2>
-                                <a href="users.html" class="btn btn-sm btn-outline-primary">View All</a>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>User</th>
-                                                <th>Status</th>
-                                                <th>Balance</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="recent-users-table">
-                                            <!-- Users will be loaded here -->
-                                        </tbody>
-                                    </table>
-                                </div>
+                <!-- Recent Users and Transactions -->
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Recent Users</h2>
+                            <a href="users.html" class="btn btn-sm btn-primary">View All</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Balance</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recent-users-table">
+                                        <!-- Recent users will be loaded here -->
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Recent Transactions -->
-                    <div class="col-12 col-lg-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h2 class="card-title">Recent Transactions</h2>
-                                <a href="transactions.html" class="btn btn-sm btn-outline-primary">View All</a>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>User</th>
-                                                <th>Type</th>
-                                                <th>Amount</th>
-                                                <th>Date</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="recent-transactions-table">
-                                            <!-- Transactions will be loaded here -->
-                                        </tbody>
-                                    </table>
-                                </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Recent Transactions</h2>
+                            <a href="transactions.html" class="btn btn-sm btn-primary">View All</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Type</th>
+                                            <th>Amount</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recent-transactions-table">
+                                        <!-- Recent transactions will be loaded here -->
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -206,33 +202,28 @@
             </div>
             <form id="add-funds-form">
                 <div class="modal-body">
-                    <input type="hidden" id="user-id-input">
-                    
-                    <div class="form-group">
-                        <label class="form-label">User</label>
-                        <input type="text" id="user-name-display" class="form-control" readonly>
+                    <div class="user-info-block">
+                        <div class="user-avatar" id="add-funds-avatar"></div>
+                        <div class="user-details">
+                            <h4 id="add-funds-user-name"></h4>
+                            <p id="add-funds-user-email"></p>
+                            <p>Current Balance: <span id="add-funds-user-balance"></span></p>
+                        </div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Current Balance</label>
-                        <input type="text" id="current-balance-display" class="form-control" readonly>
+                        <label class="form-label" for="funds-amount">Amount</label>
+                        <input type="number" id="funds-amount" class="form-control" step="0.01" min="0.01" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="amount-input">Amount</label>
-                        <input type="number" id="amount-input" class="form-control" step="0.01" min="0.01" required>
-                        <div class="form-text">Enter the amount to add to the user's account.</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="notes-input">Notes</label>
-                        <input type="text" id="notes-input" class="form-control">
-                        <div class="form-text">Optional notes for this transaction.</div>
+                        <label class="form-label" for="funds-notes">Notes</label>
+                        <textarea id="funds-notes" class="form-control" rows="3"></textarea>
                     </div>
                     
                     <div class="form-check">
-                        <input type="checkbox" id="send-email-checkbox" class="form-check-input" checked>
-                        <label class="form-label" for="send-email-checkbox">Send email notification to user</label>
+                        <input type="checkbox" id="funds-send-email" class="form-check-input" checked>
+                        <label class="form-label" for="funds-send-email">Send email notification to user</label>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -244,6 +235,7 @@
     </div>
     
     <!-- Scripts -->
+    <script src="scripts/netlify-helper.js"></script>
     <script src="scripts/api.js"></script>
     <script src="scripts/auth.js"></script>
     <script src="scripts/main.js"></script>

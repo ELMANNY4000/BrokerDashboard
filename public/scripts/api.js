@@ -1,135 +1,183 @@
 /**
- * API functionality for the Broker Admin Dashboard
+ * API Functions for the Broker Admin Dashboard
  * 
- * This file simulates a backend API using in-memory storage.
+ * This file contains functions for making API calls to the backend.
+ * For the static HTML/JS version, these functions work with local storage.
  */
 
-// In-memory storage for users, transactions, and email notifications
-const usersStore = new Map();
-const transactionsStore = new Map();
-const emailsStore = new Map();
+// Local Storage Keys
+const USERS_STORAGE_KEY = 'broker_admin_users';
+const TRANSACTIONS_STORAGE_KEY = 'broker_admin_transactions';
+const EMAIL_NOTIFICATIONS_STORAGE_KEY = 'broker_admin_emails';
 
-// Counters for generating IDs
-let userIdCounter = 1;
-let transactionIdCounter = 1;
-let emailIdCounter = 1;
-
-// Seed the store with initial data
-(function seedInitialData() {
-    // Create admin user
-    createUser({
-        username: 'admin',
-        password: 'admin123', // In a real app, this would be hashed
-        fullName: 'Admin User',
-        email: 'admin@example.com',
-        role: 'admin',
-        status: 'active',
-        balance: 0,
-    });
+// Initialize local storage with default data if empty
+(function initStorage() {
+    // Check if data already exists
+    const users = localStorage.getItem(USERS_STORAGE_KEY);
+    const transactions = localStorage.getItem(TRANSACTIONS_STORAGE_KEY);
+    const emails = localStorage.getItem(EMAIL_NOTIFICATIONS_STORAGE_KEY);
     
-    // Create some demo users
-    createUser({
-        username: 'jsmith',
-        password: 'password123',
-        fullName: 'John Smith',
-        email: 'john.smith@example.com',
-        role: 'client',
-        status: 'active',
-        balance: 25000.75,
-    });
+    // Seed initial data if not exists
+    if (!users) {
+        const defaultUsers = [
+            {
+                id: 1,
+                username: 'admin',
+                password: 'admin123',
+                fullName: 'Admin User',
+                email: 'admin@example.com',
+                role: 'admin',
+                balance: 0,
+                status: 'active',
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: 2,
+                username: 'johndoe',
+                password: 'password123',
+                fullName: 'John Doe',
+                email: 'john.doe@example.com',
+                role: 'client',
+                balance: 5000,
+                status: 'active',
+                createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString() // 3 days ago
+            },
+            {
+                id: 3,
+                username: 'janesmith',
+                password: 'password123',
+                fullName: 'Jane Smith',
+                email: 'jane.smith@example.com',
+                role: 'client',
+                balance: 7500,
+                status: 'active',
+                createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() // 5 days ago
+            },
+            {
+                id: 4,
+                username: 'mikebrown',
+                password: 'password123',
+                fullName: 'Mike Brown',
+                email: 'mike.brown@example.com',
+                role: 'broker',
+                balance: 10000,
+                status: 'active',
+                createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days ago
+            },
+            {
+                id: 5,
+                username: 'sarahjones',
+                password: 'password123',
+                fullName: 'Sarah Jones',
+                email: 'sarah.jones@example.com',
+                role: 'client',
+                balance: 2500,
+                status: 'inactive',
+                createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString() // 10 days ago
+            }
+        ];
+        
+        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(defaultUsers));
+    }
     
-    createUser({
-        username: 'agarcia',
-        password: 'password123',
-        fullName: 'Ana Garcia',
-        email: 'ana.garcia@example.com',
-        role: 'client',
-        status: 'active',
-        balance: 7520.50,
-    });
+    if (!transactions) {
+        const defaultTransactions = [
+            {
+                id: 1,
+                userId: 2,
+                amount: 5000,
+                type: 'deposit',
+                status: 'completed',
+                notes: 'Initial deposit',
+                createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString() // 3 days ago
+            },
+            {
+                id: 2,
+                userId: 3,
+                amount: 7500,
+                type: 'deposit',
+                status: 'completed',
+                notes: 'Initial deposit',
+                createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() // 5 days ago
+            },
+            {
+                id: 3,
+                userId: 4,
+                amount: 10000,
+                type: 'deposit',
+                status: 'completed',
+                notes: 'Initial deposit',
+                createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days ago
+            },
+            {
+                id: 4,
+                userId: 2,
+                amount: -1000,
+                type: 'withdrawal',
+                status: 'completed',
+                notes: 'Withdrawal request',
+                createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() // 2 days ago
+            },
+            {
+                id: 5,
+                userId: 3,
+                amount: 1000,
+                type: 'deposit',
+                status: 'completed',
+                notes: 'Additional deposit',
+                createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString() // 1 day ago
+            }
+        ];
+        
+        localStorage.setItem(TRANSACTIONS_STORAGE_KEY, JSON.stringify(defaultTransactions));
+    }
     
-    createUser({
-        username: 'mjohnson',
-        password: 'password123',
-        fullName: 'Michael Johnson',
-        email: 'michael.johnson@example.com',
-        role: 'client',
-        status: 'inactive',
-        balance: 0,
-    });
-    
-    createUser({
-        username: 'lwilliams',
-        password: 'password123',
-        fullName: 'Lisa Williams',
-        email: 'lisa.williams@example.com',
-        role: 'client',
-        status: 'active',
-        balance: 12350.25,
-    });
-    
-    // Create some demo transactions
-    createTransaction({
-        userId: 2, // John Smith
-        amount: 10000,
-        type: 'deposit',
-        status: 'completed',
-        notes: 'Initial deposit',
-    });
-    
-    createTransaction({
-        userId: 2, // John Smith
-        amount: 15000.75,
-        type: 'deposit',
-        status: 'completed',
-        notes: 'Additional investment',
-    });
-    
-    createTransaction({
-        userId: 3, // Ana Garcia
-        amount: 7520.50,
-        type: 'deposit',
-        status: 'completed',
-        notes: 'Initial deposit',
-    });
-    
-    createTransaction({
-        userId: 4, // Lisa Williams
-        amount: 15000,
-        type: 'deposit',
-        status: 'completed',
-        notes: 'Initial deposit',
-    });
-    
-    createTransaction({
-        userId: 4, // Lisa Williams
-        amount: -2649.75,
-        type: 'withdrawal',
-        status: 'completed',
-        notes: 'Partial withdrawal request',
-    });
-    
-    // Create some demo email notifications
-    createEmailNotification({
-        recipientEmails: ['john.smith@example.com'],
-        subject: 'Welcome to our platform!',
-        content: 'Thank you for registering with our brokerage service. We are excited to have you on board.',
-        status: 'sent',
-    });
-    
-    createEmailNotification({
-        recipientEmails: ['ana.garcia@example.com'],
-        subject: 'Your account is now active',
-        content: 'Congratulations! Your brokerage account is now fully activated and ready for trading.',
-        status: 'sent',
-    });
-    
-    createEmailNotification({
-        recipientEmails: ['john.smith@example.com', 'ana.garcia@example.com', 'lisa.williams@example.com'],
-        subject: 'New investment opportunities available',
-        content: 'Check out our newest investment options that have just become available on the platform.',
-        status: 'sent',
-    });
+    if (!emails) {
+        const defaultEmails = [
+            {
+                id: 1,
+                recipientEmails: ['john.doe@example.com'],
+                subject: 'Welcome to our platform',
+                content: 'Dear John Doe,\n\nWelcome to our brokerage platform. We are excited to have you on board.\n\nBest regards,\nThe Admin Team',
+                status: 'sent',
+                createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString() // 3 days ago
+            },
+            {
+                id: 2,
+                recipientEmails: ['jane.smith@example.com'],
+                subject: 'Welcome to our platform',
+                content: 'Dear Jane Smith,\n\nWelcome to our brokerage platform. We are excited to have you on board.\n\nBest regards,\nThe Admin Team',
+                status: 'sent',
+                createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() // 5 days ago
+            },
+            {
+                id: 3,
+                recipientEmails: ['mike.brown@example.com'],
+                subject: 'Welcome to our platform',
+                content: 'Dear Mike Brown,\n\nWelcome to our brokerage platform. We are excited to have you on board.\n\nBest regards,\nThe Admin Team',
+                status: 'sent',
+                createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days ago
+            },
+            {
+                id: 4,
+                recipientEmails: ['john.doe@example.com'],
+                subject: 'Transaction Confirmation: Withdrawal',
+                content: 'Dear John Doe,\n\nA withdrawal for $1,000.00 has been completed in your account.\n\nBest regards,\nThe Admin Team',
+                status: 'sent',
+                createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() // 2 days ago
+            },
+            {
+                id: 5,
+                recipientEmails: ['jane.smith@example.com'],
+                subject: 'Transaction Confirmation: Deposit',
+                content: 'Dear Jane Smith,\n\nA deposit for $1,000.00 has been completed in your account.\n\nBest regards,\nThe Admin Team',
+                status: 'sent',
+                createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString() // 1 day ago
+            }
+        ];
+        
+        localStorage.setItem(EMAIL_NOTIFICATIONS_STORAGE_KEY, JSON.stringify(defaultEmails));
+    }
 })();
 
 /**
@@ -137,7 +185,8 @@ let emailIdCounter = 1;
  * @returns {Array} Array of user objects
  */
 function getUsers() {
-    return Array.from(usersStore.values());
+    const users = localStorage.getItem(USERS_STORAGE_KEY);
+    return users ? JSON.parse(users) : [];
 }
 
 /**
@@ -146,7 +195,8 @@ function getUsers() {
  * @returns {Object|null} User object or null if not found
  */
 function getUserById(userId) {
-    return usersStore.get(userId) || null;
+    const users = getUsers();
+    return users.find(user => user.id === userId) || null;
 }
 
 /**
@@ -155,12 +205,8 @@ function getUserById(userId) {
  * @returns {Object|null} User object or null if not found
  */
 function getUserByUsername(username) {
-    for (const user of usersStore.values()) {
-        if (user.username === username) {
-            return user;
-        }
-    }
-    return null;
+    const users = getUsers();
+    return users.find(user => user.username === username) || null;
 }
 
 /**
@@ -169,21 +215,30 @@ function getUserByUsername(username) {
  * @returns {Object} The created user
  */
 function createUser(userData) {
-    const timestamp = new Date().toISOString();
+    const users = getUsers();
+    
+    // Generate new ID
+    const newId = users.length > 0 ? Math.max(...users.map(user => user.id)) + 1 : 1;
+    
+    // Create user object
     const newUser = {
-        id: userIdCounter++,
+        id: newId,
         username: userData.username,
         password: userData.password,
         fullName: userData.fullName,
         email: userData.email,
         role: userData.role || 'client',
-        status: userData.status || 'active',
-        balance: parseFloat(userData.balance) || 0,
-        createdAt: timestamp,
-        updatedAt: timestamp
+        balance: parseFloat(userData.initialBalance || 0),
+        status: 'active',
+        createdAt: new Date().toISOString()
     };
     
-    usersStore.set(newUser.id, newUser);
+    // Add to users array
+    users.push(newUser);
+    
+    // Save to local storage
+    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+    
     return newUser;
 }
 
@@ -194,17 +249,20 @@ function createUser(userData) {
  * @returns {Object|null} Updated user or null if not found
  */
 function updateUser(userId, updatedData) {
-    const user = usersStore.get(userId);
+    const users = getUsers();
+    const userIndex = users.findIndex(user => user.id === userId);
     
-    if (!user) return null;
+    if (userIndex === -1) {
+        return null;
+    }
     
-    const updatedUser = {
-        ...user,
-        ...updatedData,
-        updatedAt: new Date().toISOString()
-    };
+    // Update user data
+    const updatedUser = { ...users[userIndex], ...updatedData };
+    users[userIndex] = updatedUser;
     
-    usersStore.set(userId, updatedUser);
+    // Save to local storage
+    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+    
     return updatedUser;
 }
 
@@ -215,18 +273,7 @@ function updateUser(userId, updatedData) {
  * @returns {Object|null} Updated user or null if not found
  */
 function updateUserBalance(userId, newBalance) {
-    const user = usersStore.get(userId);
-    
-    if (!user) return null;
-    
-    const updatedUser = {
-        ...user,
-        balance: newBalance,
-        updatedAt: new Date().toISOString()
-    };
-    
-    usersStore.set(userId, updatedUser);
-    return updatedUser;
+    return updateUser(userId, { balance: newBalance });
 }
 
 /**
@@ -234,7 +281,8 @@ function updateUserBalance(userId, newBalance) {
  * @returns {Array} Array of transaction objects
  */
 function getTransactions() {
-    return Array.from(transactionsStore.values());
+    const transactions = localStorage.getItem(TRANSACTIONS_STORAGE_KEY);
+    return transactions ? JSON.parse(transactions) : [];
 }
 
 /**
@@ -243,8 +291,8 @@ function getTransactions() {
  * @returns {Array} Array of transaction objects
  */
 function getUserTransactions(userId) {
-    return Array.from(transactionsStore.values())
-        .filter(transaction => transaction.userId === userId);
+    const transactions = getTransactions();
+    return transactions.filter(transaction => transaction.userId === userId);
 }
 
 /**
@@ -253,25 +301,35 @@ function getUserTransactions(userId) {
  * @returns {Object} The created transaction
  */
 function createTransaction(transactionData) {
-    const timestamp = new Date().toISOString();
+    const transactions = getTransactions();
+    
+    // Generate new ID
+    const newId = transactions.length > 0 ? Math.max(...transactions.map(transaction => transaction.id)) + 1 : 1;
+    
+    // Create transaction object
     const newTransaction = {
-        id: transactionIdCounter++,
+        id: newId,
         userId: transactionData.userId,
         amount: parseFloat(transactionData.amount),
         type: transactionData.type,
-        status: transactionData.status || 'pending',
+        status: transactionData.status || 'completed',
         notes: transactionData.notes || '',
-        createdAt: timestamp,
-        updatedAt: timestamp
+        createdAt: new Date().toISOString()
     };
     
-    transactionsStore.set(newTransaction.id, newTransaction);
+    // Add to transactions array
+    transactions.push(newTransaction);
     
-    // Update user balance
-    const user = usersStore.get(newTransaction.userId);
-    if (user) {
-        const newBalance = user.balance + newTransaction.amount;
-        updateUserBalance(user.id, newBalance);
+    // Save to local storage
+    localStorage.setItem(TRANSACTIONS_STORAGE_KEY, JSON.stringify(transactions));
+    
+    // Update user balance if transaction is completed
+    if (newTransaction.status === 'completed') {
+        const user = getUserById(newTransaction.userId);
+        if (user) {
+            const newBalance = user.balance + newTransaction.amount;
+            updateUserBalance(user.id, newBalance);
+        }
     }
     
     return newTransaction;
@@ -282,7 +340,8 @@ function createTransaction(transactionData) {
  * @returns {Array} Array of email notification objects
  */
 function getEmailNotifications() {
-    return Array.from(emailsStore.values());
+    const emails = localStorage.getItem(EMAIL_NOTIFICATIONS_STORAGE_KEY);
+    return emails ? JSON.parse(emails) : [];
 }
 
 /**
@@ -291,17 +350,26 @@ function getEmailNotifications() {
  * @returns {Object} The created email notification
  */
 function createEmailNotification(emailData) {
-    const timestamp = new Date().toISOString();
-    const newEmailNotification = {
-        id: emailIdCounter++,
+    const emails = getEmailNotifications();
+    
+    // Generate new ID
+    const newId = emails.length > 0 ? Math.max(...emails.map(email => email.id)) + 1 : 1;
+    
+    // Create email notification object
+    const newEmail = {
+        id: newId,
         recipientEmails: emailData.recipientEmails,
         subject: emailData.subject,
         content: emailData.content,
-        status: emailData.status || 'pending',
-        createdAt: timestamp,
-        updatedAt: timestamp
+        status: emailData.status || 'sent',
+        createdAt: new Date().toISOString()
     };
     
-    emailsStore.set(newEmailNotification.id, newEmailNotification);
-    return newEmailNotification;
+    // Add to emails array
+    emails.push(newEmail);
+    
+    // Save to local storage
+    localStorage.setItem(EMAIL_NOTIFICATIONS_STORAGE_KEY, JSON.stringify(emails));
+    
+    return newEmail;
 }

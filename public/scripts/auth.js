@@ -1,37 +1,36 @@
 /**
- * Authentication functionality for the Broker Admin Dashboard
+ * Authentication JavaScript for the Broker Admin Dashboard
  * 
- * This file handles user authentication and session management.
+ * This file contains functions for user authentication and session management.
  */
 
-// Current authenticated user storage key
-const AUTH_USER_KEY = 'broker_admin_user';
+// Storage key for the authenticated user
+const AUTH_USER_KEY = 'broker_admin_auth_user';
 
 /**
  * Check if user is authenticated, redirect to login if not
  * @returns {boolean} Authentication status
  */
 function checkAuth() {
-    const currentPath = window.location.pathname;
-    const isLoginPage = currentPath.includes('login.html');
-    const currentUser = getCurrentUser();
+    const auth = localStorage.getItem(AUTH_USER_KEY);
     
-    if (!currentUser && !isLoginPage) {
-        // User is not authenticated and not on login page, redirect to login
-        window.location.href = 'login.html';
+    if (!auth) {
+        // Not logged in, redirect to login page
+        if (!window.location.pathname.includes('login.html')) {
+            window.location.href = 'login.html';
+        }
         return false;
-    } else if (currentUser && isLoginPage) {
-        // User is authenticated and on login page, redirect to dashboard
+    }
+    
+    // Check if on login page but already authenticated
+    if (window.location.pathname.includes('login.html')) {
         window.location.href = 'index.html';
         return true;
     }
     
-    // Update UI based on authenticated user if available
-    if (currentUser && !isLoginPage) {
-        updateAuthUI(currentUser);
-    }
-    
-    return !!currentUser;
+    // Update UI with current user
+    updateAuthUI(JSON.parse(auth));
+    return true;
 }
 
 /**
@@ -44,13 +43,19 @@ function login(username, password) {
     const user = getUserByUsername(username);
     
     if (user && user.password === password) {
-        // Create a copy of the user without the password field for storage
-        const safeUser = { ...user };
-        delete safeUser.password;
+        // Create auth user object (exclude password)
+        const authUser = {
+            id: user.id,
+            username: user.username,
+            fullName: user.fullName,
+            email: user.email,
+            role: user.role
+        };
         
-        // Store authenticated user in session
-        sessionStorage.setItem(AUTH_USER_KEY, JSON.stringify(safeUser));
-        return safeUser;
+        // Store in local storage
+        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(authUser));
+        
+        return authUser;
     }
     
     return null;
@@ -60,7 +65,7 @@ function login(username, password) {
  * Log out the current user
  */
 function logout() {
-    sessionStorage.removeItem(AUTH_USER_KEY);
+    localStorage.removeItem(AUTH_USER_KEY);
     window.location.href = 'login.html';
 }
 
@@ -69,8 +74,8 @@ function logout() {
  * @returns {Object|null} Current user or null if not authenticated
  */
 function getCurrentUser() {
-    const userJson = sessionStorage.getItem(AUTH_USER_KEY);
-    return userJson ? JSON.parse(userJson) : null;
+    const auth = localStorage.getItem(AUTH_USER_KEY);
+    return auth ? JSON.parse(auth) : null;
 }
 
 /**
@@ -78,19 +83,28 @@ function getCurrentUser() {
  * @param {Object} user - The authenticated user
  */
 function updateAuthUI(user) {
-    // Update username display
-    const usernameElements = document.querySelectorAll('.user-name');
-    usernameElements.forEach(el => {
-        if (el) el.textContent = user.fullName;
-    });
-    
-    // Update user avatar with initials
+    // Set user avatar and info
     const avatarElements = document.querySelectorAll('.user-avatar');
+    const userNameElements = document.querySelectorAll('.user-name');
+    const userRoleElements = document.querySelectorAll('.user-role');
+    
+    // Get initials for avatar
+    const initials = getInitials(user.fullName);
+    
+    // Update elements
     avatarElements.forEach(el => {
-        if (el) el.textContent = getInitials(user.fullName);
+        el.textContent = initials;
     });
     
-    // Add logout functionality
+    userNameElements.forEach(el => {
+        el.textContent = user.fullName;
+    });
+    
+    userRoleElements.forEach(el => {
+        el.textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+    });
+    
+    // Set up logout button
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', function(e) {
@@ -104,10 +118,14 @@ function updateAuthUI(user) {
  * Initialize authentication on page load
  */
 function initAuth() {
+    // Skip auth check for login page
+    if (window.location.pathname.includes('login.html')) {
+        return;
+    }
+    
+    // Check authentication
     checkAuth();
 }
 
-// Run authentication check on all pages except login
-if (!window.location.pathname.includes('login.html')) {
-    document.addEventListener('DOMContentLoaded', initAuth);
-}
+// Initialize auth when DOM is loaded
+document.addEventListener('DOMContentLoaded', initAuth);
