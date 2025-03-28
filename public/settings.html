@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Brokerage Admin Panel</title>
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>Brokerage Admin</h2>
+      </div>
+      <nav class="sidebar-menu">
+        <ul>
+          <li><a href="/" class="nav-link" data-route="/"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+          <li><a href="/users.html" class="nav-link" data-route="/users"><i class="fas fa-users"></i> Users</a></li>
+          <li><a href="/transactions.html" class="nav-link" data-route="/transactions"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
+          <li><a href="/email-notifications.html" class="nav-link" data-route="/email-notifications"><i class="fas fa-envelope"></i> Email Notifications</a></li>
+          <li><a href="/settings.html" class="nav-link active" data-route="/settings"><i class="fas fa-cog"></i> Settings</a></li>
+        </ul>
+      </nav>
+    </div>
+    
+    <div class="main-content">
+      <header class="top-header">
+        <div class="header-left">
+          <button id="toggle-sidebar" class="menu-toggle">
+            <i class="fas fa-bars"></i>
+          </button>
+          <h1 id="page-title">Settings</h1>
+        </div>
+        <div class="header-right">
+          <div class="user-profile">
+            <span class="username">Admin User</span>
+            <button id="logout-btn" class="btn btn-outline"><i class="fas fa-sign-out-alt"></i> Logout</button>
+          </div>
+        </div>
+      </header>
+      
+      <main id="main-content">
+        <div class="dashboard-section">
+          <div class="section-header">
+            <h2>Profile Settings</h2>
+          </div>
+          
+          <div class="settings-content" style="padding: 20px;">
+            <form id="profile-settings-form">
+              <div class="form-group">
+                <label for="admin-name">Name:</label>
+                <input type="text" id="admin-name" name="name" value="Admin User">
+              </div>
+              
+              <div class="form-group">
+                <label for="admin-email">Email:</label>
+                <input type="email" id="admin-email" name="email" value="admin@example.com">
+              </div>
+              
+              <div class="form-group">
+                <label for="admin-username">Username:</label>
+                <input type="text" id="admin-username" name="username" value="admin" readonly>
+              </div>
+              
+              <div class="form-group">
+                <label for="admin-password">New Password:</label>
+                <input type="password" id="admin-password" name="password" placeholder="Enter new password">
+              </div>
+              
+              <div class="form-group">
+                <label for="admin-password-confirm">Confirm Password:</label>
+                <input type="password" id="admin-password-confirm" name="passwordConfirm" placeholder="Confirm new password">
+              </div>
+              
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        
+        <div class="dashboard-section" style="margin-top: 20px;">
+          <div class="section-header">
+            <h2>Notification Settings</h2>
+          </div>
+          
+          <div class="settings-content" style="padding: 20px;">
+            <form id="notification-settings-form">
+              <div class="form-group">
+                <label class="checkbox-container">
+                  <input type="checkbox" id="email-notifications" name="emailNotifications" checked>
+                  <span class="checkbox-label">Email Notifications</span>
+                </label>
+              </div>
+              
+              <div class="form-group">
+                <label class="checkbox-container">
+                  <input type="checkbox" id="transaction-alerts" name="transactionAlerts" checked>
+                  <span class="checkbox-label">Transaction Alerts</span>
+                </label>
+              </div>
+              
+              <div class="form-group">
+                <label class="checkbox-container">
+                  <input type="checkbox" id="new-user-alerts" name="newUserAlerts" checked>
+                  <span class="checkbox-label">New User Alerts</span>
+                </label>
+              </div>
+              
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Preferences</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  
+  <script src="/scripts/auth.js"></script>
+  <script src="/scripts/api.js"></script>
+  <script src="/scripts/main.js"></script>
+  <script src="/scripts/settings.js"></script>
+</body>
+</html>

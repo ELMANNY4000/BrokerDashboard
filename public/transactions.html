@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transactions - Brokerage Admin Panel</title>
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>Brokerage Admin</h2>
+      </div>
+      <nav class="sidebar-menu">
+        <ul>
+          <li><a href="/" class="nav-link" data-route="/"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+          <li><a href="/users.html" class="nav-link" data-route="/users"><i class="fas fa-users"></i> Users</a></li>
+          <li><a href="/transactions.html" class="nav-link active" data-route="/transactions"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
+          <li><a href="/email-notifications.html" class="nav-link" data-route="/email-notifications"><i class="fas fa-envelope"></i> Email Notifications</a></li>
+          <li><a href="/settings.html" class="nav-link" data-route="/settings"><i class="fas fa-cog"></i> Settings</a></li>
+        </ul>
+      </nav>
+    </div>
+    
+    <div class="main-content">
+      <header class="top-header">
+        <div class="header-left">
+          <button id="toggle-sidebar" class="menu-toggle">
+            <i class="fas fa-bars"></i>
+          </button>
+          <h1 id="page-title">Transactions</h1>
+        </div>
+        <div class="header-right">
+          <div class="user-profile">
+            <span class="username">Admin User</span>
+            <button id="logout-btn" class="btn btn-outline"><i class="fas fa-sign-out-alt"></i> Logout</button>
+          </div>
+        </div>
+      </header>
+      
+      <main id="main-content">
+        <div class="dashboard-section">
+          <div class="section-header">
+            <h2>All Transactions</h2>
+          </div>
+          
+          <div class="table-container">
+            <table class="data-table" id="transactions-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody id="transactions-table-body">
+                <!-- Transaction data will be loaded here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  
+  <script src="/scripts/auth.js"></script>
+  <script src="/scripts/api.js"></script>
+  <script src="/scripts/main.js"></script>
+  <script src="/scripts/transactions.js"></script>
+</body>
+</html>

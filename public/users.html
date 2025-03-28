@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Users - Brokerage Admin Panel</title>
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>Brokerage Admin</h2>
+      </div>
+      <nav class="sidebar-menu">
+        <ul>
+          <li><a href="/" class="nav-link" data-route="/"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+          <li><a href="/users.html" class="nav-link active" data-route="/users"><i class="fas fa-users"></i> Users</a></li>
+          <li><a href="/transactions.html" class="nav-link" data-route="/transactions"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
+          <li><a href="/email-notifications.html" class="nav-link" data-route="/email-notifications"><i class="fas fa-envelope"></i> Email Notifications</a></li>
+          <li><a href="/settings.html" class="nav-link" data-route="/settings"><i class="fas fa-cog"></i> Settings</a></li>
+        </ul>
+      </nav>
+    </div>
+    
+    <div class="main-content">
+      <header class="top-header">
+        <div class="header-left">
+          <button id="toggle-sidebar" class="menu-toggle">
+            <i class="fas fa-bars"></i>
+          </button>
+          <h1 id="page-title">Users</h1>
+        </div>
+        <div class="header-right">
+          <div class="user-profile">
+            <span class="username">Admin User</span>
+            <button id="logout-btn" class="btn btn-outline"><i class="fas fa-sign-out-alt"></i> Logout</button>
+          </div>
+        </div>
+      </header>
+      
+      <main id="main-content">
+        <div class="dashboard-section">
+          <div class="section-header">
+            <h2>All Users</h2>
+          </div>
+          
+          <div class="table-container">
+            <table class="data-table" id="users-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Email</th>
+                  <th>Status</th>
+                  <th>Balance</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="users-table-body">
+                <!-- User data will be loaded here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  
+  <!-- Add Funds Modal -->
+  <div id="add-funds-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Add Funds</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="add-funds-form">
+          <input type="hidden" id="user-id" name="userId">
+          <div class="form-group">
+            <label for="user-name">User:</label>
+            <input type="text" id="user-name" readonly>
+          </div>
+          <div class="form-group">
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" name="amount" step="0.01" required>
+          </div>
+          <div class="form-group">
+            <label for="type">Type:</label>
+            <select id="type" name="type">
+              <option value="deposit">Deposit</option>
+              <option value="withdrawal">Withdrawal</option>
+              <option value="bonus">Bonus</option>
+              <option value="adjustment">Adjustment</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="notes">Notes:</label>
+            <textarea id="notes" name="notes"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="button" class="btn btn-outline modal-cancel">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <script src="/scripts/auth.js"></script>
+  <script src="/scripts/api.js"></script>
+  <script src="/scripts/main.js"></script>
+  <script src="/scripts/users.js"></script>
+</body>
+</html>

@@ -4,6 +4,10 @@ import { storage } from "./storage";
 import { insertUserSchema, insertTransactionSchema, insertEmailNotificationSchema } from "@shared/schema";
 import { ZodError } from "zod";
 import nodemailer from "nodemailer";
+import express from "express";
+import path from "path";
+import fs from "fs";
+import { log } from "./vite";
 
 // Configure a test nodemailer transporter (for development only)
 const transporter = nodemailer.createTransport({
@@ -17,6 +21,18 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Serve static files from the public directory for html requests
+  const publicPath = path.resolve(process.cwd(), "public");
+  
+  // Check if public directory exists
+  if (!fs.existsSync(publicPath)) {
+    log(`Public directory not found at ${publicPath}, creating it...`, "server");
+    fs.mkdirSync(publicPath, { recursive: true });
+  }
+  
+  // Serve static files from the public directory
+  app.use(express.static(publicPath));
+  
   // API Routes - Prefix all routes with /api
   
   // Auth routes
@@ -259,6 +275,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error creating email notification:", error);
       return res.status(500).json({ message: "Failed to create email notification" });
     }
+  });
+
+  // Client-side routing handler - serve index.html for HTML routes that don't match API routes
+  app.get("*", (req: Request, res: Response, next) => {
+    // Skip for API routes or if requesting a specific file
+    if (req.originalUrl.startsWith('/api') || req.originalUrl.includes('.')) {
+      return next();
+    }
+    
+    const publicPath = path.resolve(process.cwd(), "public");
+    const requestPath = path.join(publicPath, req.path);
+    
+    // If a specific HTML file is requested (like /users.html), serve it
+    if (fs.existsSync(requestPath + '.html')) {
+      return res.sendFile(requestPath + '.html');
+    }
+    
+    // Otherwise send the index.html file
+    res.sendFile(path.join(publicPath, 'index.html'));
   });
 
   const httpServer = createServer(app);
